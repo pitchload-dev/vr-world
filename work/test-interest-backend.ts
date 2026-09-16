@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { pbkdf2Sync, randomBytes } from 'node:crypto';
+import { createInterestHandler } from '../server/interests';
+import { fileInterestStore } from '../server/file-interest-store';
+const directory=await mkdtemp(join(tmpdir(),'kit-interest-test-'));
+const db=join(directory,'store.json');
+const password='automated-test-password';
+const salt=randomBytes(16),hash=`600000:${salt.toString('hex')}:${pbkdf2Sync(password,salt,600000,32,'sha256').toString('hex')}`;
+let now=Date.now();let handler=createInterestHandler(fileInterestStore(db),hash,()=>now);
+function request(action:string,body?:unknown,cookie='',origin='https://exhibition.example',query='') {
+ return new Request(`https://exhibition.example/api/interests?action=${action}${query}`,{method:body===undefined?'GET':'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:cookie},body:body===undefined?undefined:JSON.stringify(body)});
+}
+const input=(extra={})=>({submissionId:crypto.randomUUID(),startupId:4,interested:true,amount:25000,source:'desktop',...extra});
+try {
+ assert.equal((await handler(request('list'))).status,401);
+ assert.equal((await handler(request('login',{password:'wrong'}),'wrong-password')).status,401);
+ assert.equal((await handler(request('login',{password},'','https://attacker.example'),'csrf')).status,403);
+ const follow={submissionId:crypto.randomUUID(),startupId:4,day:1,slot:'14:00',name:'Test Person',email:'test@example.org',source:'desktop'};
+ assert.equal((await handler(request('follow-up-list'))).status,401);
+ assert.equal((await handler(request('follow-up-submit',follow),'follow')).status,201);
+ assert.equal((await handler(request('follow-up-submit',follow),'follow')).status,201);
+ assert.equal((await handler(request('follow-up-submit',{...follow,slot:'10:00'}),'follow')).status,409);
+ for(const extra of [{day:2},{day:0.5},{slot:'03:15'},{email:'bad'},{name:'x'.repeat(121)},{source:'other'},{startupId:0},{submissionId:'invalid'}])
+   assert.equal((await handler(request('follow-up-submit',{...follow,...extra}),'follow-invalid')).status,400);
+ assert.equal((await handler(request('follow-up-submit',follow,'','https://attacker.example'))).status,403);
+ const vrFollow={submissionId:crypto.randomUUID(),startupId:4,source:'vr',name:'VR Test',email:'vr@example.org'};
+ assert.equal((await handler(request('follow-up-submit',vrFollow),'follow-vr')).status,201);
+ assert.equal((await handler(request('follow-up-submit',vrFollow),'follow-vr')).status,201);
+ assert.equal((await handler(request('follow-up-submit',{...vrFollow,email:'changed@example.org'}),'follow-vr')).status,409);
+ const followConcurrent=await Promise.all(Array.from({length:8},(_,i)=>handler(request('follow-up-submit',{...follow,submissionId:crypto.randomUUID(),startupId:i+1}),'follow-concurrent-'+i)));
+ assert.ok(followConcurrent.every(r=>r.status===201));
+ const first=input();assert.equal((await handler(request('submit',first),'visitor')).status,201);
+ assert.equal((await handler(request('submit',first),'visitor')).status,201);
+ assert.equal((await handler(request('submit',{...first,amount:30000}),'visitor')).status,409);
+ for(const bad of [input({startupId:12}),input({amount:110}),input({amount:250.555}),input({interested:'yes'}),input({source:'other'}),input({amount:25000,interested:false}),input({amount:'25000'}),input({submissionId:'guess'})])assert.equal((await handler(request('submit',bad),'invalid')).status,400);
+ assert.equal((await handler(request('submit',input({interested:false,amount:null,source:'vr'})),'visitor2')).status,201);
+ assert.equal((await handler(request('submit',input({amount:null})),'visitor3')).status,201);
+ const concurrent=await Promise.all(Array.from({length:8},(_,i)=>handler(request('submit',input({startupId:i+1})),'concurrent-'+i)));
+ assert.ok(concurrent.every(r=>r.status===201),'Concurrent entries must be saved');
+ // A new handler and disk-store instance simulates restarting the local backend.
+ handler=createInterestHandler(fileInterestStore(db),hash,()=>now);
+ assert.equal((await handler(request('list'))).status,401);
+ const logged=await handler(request('login',{password}),'admin');assert.equal(logged.status,200);
+ const cookie=logged.headers.get('set-cookie')!;assert.match(cookie,/HttpOnly/);assert.match(cookie,/Secure/);assert.match(cookie,/SameSite=Strict/);
+ const list=await handler(request('list',undefined,cookie));assert.equal(list.status,200);
+ const table=await list.json() as {rows:any[];total:number};assert.equal(table.total,11);assert.equal(table.rows.find(r=>r.id===first.submissionId).startup,'FORMIC');
+ assert.equal(table.rows.find(r=>r.id===first.submissionId).amountCents,2500000);
+ const followTable=await (await handler(request('follow-up-list',undefined,cookie))).json() as {rows:any[];total:number};
+ assert.equal(followTable.total,10);
+ assert.equal(followTable.rows.find(r=>r.id===follow.submissionId).startup,'FORMIC');
+ assert.equal(followTable.rows.find(r=>r.id===follow.submissionId).email,'test@example.org');
+ assert.equal(followTable.rows.find(r=>r.id===vrFollow.submissionId).source,'vr');
+ assert.equal(followTable.rows.find(r=>r.id===vrFollow.submissionId).email,'vr@example.org');
+ assert.equal(followTable.rows.find(r=>r.id===vrFollow.submissionId).day,null);
+ assert.equal(followTable.rows.find(r=>r.id===vrFollow.submissionId).slot,null);
+ assert.equal(followTable.rows.find(r=>r.id===follow.submissionId).day,1,'Legacy event dates survive');
+ assert.equal(table.rows.some(r=>r.id===follow.submissionId),false,'Tables are separate');
+ assert.ok(!JSON.stringify(table).includes(password));
+ assert.match(list.headers.get('cache-control')!,/no-store/);
+ assert.equal((await handler(request('logout',{},cookie),'admin')).status,200);
+ assert.equal((await handler(request('list',undefined,cookie))).status,401,'Logged-out cookie cannot be replayed');
+ assert.equal((await handler(request('follow-up-list',undefined,cookie))).status,401);
+ const session2=await handler(request('login',{password}),'admin');const cookie2=session2.headers.get('set-cookie')!;now+=9*3600000;
+ assert.equal((await handler(request('list',undefined,cookie2))).status,401,'Expired session rejected');
+ for(let i=0;i<8;i++)assert.equal((await handler(request('login',{password:'wrong'}),'brute-force')).status,401);
+ assert.equal((await handler(request('login',{password}),'brute-force')).status,429);
+ const failed=createInterestHandler({get:async()=>{throw Error('storage offline');},put:async()=>{throw Error('storage offline');}},hash);
+ assert.equal((await failed(request('submit',input()))).status,503);
+ assert.equal((await failed(request('follow-up-submit',follow))).status,503);
+ const huge=new Request('https://exhibition.example/api/interests?action=submit',{method:'POST',headers:{Origin:'https://exhibition.example','Content-Type':'application/json'},body:JSON.stringify({value:'x'.repeat(5000)})});
+ assert.equal((await handler(huge)).status,413);
+ console.log('PASS: durable restart, simultaneous submissions, idempotency, server-side validation, password access, protected reads, logout revocation, expiry, brute-force limit, CSRF rejection and storage failures.');
+}finally{await rm(directory,{recursive:true,force:true});}

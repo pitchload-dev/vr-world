@@ -1,0 +1,9 @@
+/*
+  Permissions-Policy: xr-spatial-tracking=(self), fullscreen=(self)
+  X-Content-Type-Options: nosniff
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/demo-content.json
+  Cache-Control: no-cache

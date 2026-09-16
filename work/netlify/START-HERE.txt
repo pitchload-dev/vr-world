@@ -1,0 +1,123 @@
+KIT VENTURE HALL — STATIC PREVIEW
+
+For investment-interest and follow-up storage and the protected tables, use the separate
+kit-venture-hall-netlify-backend.zip package and its START-HERE.md.
+Netlify Drop alone does not deploy the backend function. Saving will show an
+error until the function is deployed; it never shows a fake success.
+
+UPLOAD
+1. Unzip kit-venture-hall-netlify.zip.
+2. Open https://app.netlify.com/drop and sign in to your Netlify account.
+3. Drag the extracted kit-venture-hall-netlify folder into the upload area.
+   The folder you upload must contain index.html directly inside it.
+4. Wait for deployment, then open the HTTPS address Netlify gives you.
+
+No build command, terminal, installation, API key or server is needed.
+The JavaScript, styles, font, saved Pitchload data and preview video are bundled.
+Keep _headers and _redirects with index.html: they enable the headset permissions
+and the meeting page routing on Netlify.
+
+META QUEST 3
+Open the Netlify HTTPS address directly in Meta Quest Browser.
+Select Enter VR and allow the browser's immersive VR permission.
+Use your controllers: point at the floor and press the trigger to teleport.
+Use the LEFT thumbstick to walk in the direction you push it, relative to your
+headset: forward is forward, right is sideways right, and likewise for back/left.
+Push gently to move slowly; push fully for walking speed. Looking up or down does
+not move you vertically. Booth walls, furniture and hall boundaries stop movement.
+Move the right thumbstick sideways to snap turn.
+Center the sticks after closing a reader or the headset menu to resume movement.
+The green floor ring marks a valid teleport spot; a coral ring marks a blocked one.
+Controller rays and selection dots highlight interactive objects.
+Use PREV BOOTH / NEXT BOOTH on your left controller to explore in sequence.
+Select a presentation screen to open a paginated reader in front of you.
+Squeeze either controller to bring an open reader back into view.
+Point and trigger-select slide arrows, profile pages and careers cards.
+The controller menu returns to the information desk or exits VR.
+Select the careers shelf to bring a readable job card in front of you.
+Use Read more and Next role when available, then Close to return to the hall.
+The Request follow up kiosk opens the contact form without leaving VR.
+Choose an example event day and time, confirm the preview, and return to the booth.
+The floating panels stay in place while you look around. Movement is paused until
+you close them, so you can read and select comfortably.
+Select Unverbindliches Interesse bekunden on an investment banner to open the
+German interest preview. Choose Yes or No; with Yes, choose an optional amount.
+In VR, use the amount presets and plus/minus controls. On desktop, type an amount.
+Interesse speichern sends the selected answer to the backend. A confirmation
+appears only after successful storage. Cancel does not submit the form.
+
+DESKTOP
+Choose Enter the exhibition. Drag the scene to look around.
+Use W A S D or the arrow keys to walk.
+Choose a booth on the floor plan, or use the startup directory.
+Click company screens, profile boards, slide arrows and careers cards.
+The Video tab in the company popup contains the preview film.
+Hover over objects to see their outline and an action hint. Click a 3D exhibit
+to activate its concept; select it again to reset. Each plinth names its action.
+Use the nearby-booth shortcuts or the Next booth button.
+Visited booths and your current booth are marked on the map.
+
+WHAT IS INCLUDED
+- Subtle shimmering outlines on controls, hover highlights and brief click feedback.
+  Nearby 3D objects shimmer one at a time; VR buttons and keyboard keys respond
+  without moving the reading surface or changing controller targets.
+  Reduced-motion preferences and Pause exhibit animation disable these effects.
+- New simple 3D concepts, each with a specific interaction. Read EXHIBITS.md for
+  the meaning and sources. Sparseon remains a labeled neutral concept until its
+  activity is confirmed by the event organizer.
+- Redesigned booths with a large overview board: company summary, founding year,
+  team size and listed job count. Missing facts appear as a dash.
+- A profile board replaces the video wall: Our Product, Our Company, Headquarters.
+  Select it to read every supplied profile field, with page controls in VR.
+- Video is available only in the company popup.
+- An inward-facing investment panel.
+- Career shelves show individual API roles; selecting a card opens that exact role.
+- The information desk shows startup names only.
+- The third top navigation tab opens the password-protected interest table.
+- Follow-up Requests opens a separate table using the same protected login.
+- VR investment amount increments: 10, 100, 500, 1,000 or 10,000 euros.
+- Eleven named startup booths and one information desk.
+- Illuminated booth frames, central 3D concept exhibits and vertical careers racks.
+- Interactive preview slides and an 18-second silent preview film.
+- Published sample job listings where available.
+- Meeting requests from desktop and VR are saved when the backend is deployed.
+  No day or time selection. Name/email are optional in both browser and VR.
+  A controller-operated keyboard enables VR contact entry. No invitations are sent.
+- Close-up careers cards and a meeting-request popup for desktop and VR.
+- A seeking-investment banner on every booth, with clearly labeled sample amounts.
+- A German non-binding interest dialog inspired by the supplied ONINO screenshot.
+  Responses are stored for the event team when the backend is deployed.
+  Nothing is submitted to ONINO or Pitchload. Investment amounts remain examples.
+
+CONTENT SOURCES
+This standalone download contains a saved Pitchload API snapshot retrieved on
+9 September 2026. It does not call Pitchload from the browser or include an API key.
+Seven profiles are imported: REMENT, Semorai, Viss, FORMIC, Validaitor,
+Superheated and Photreon. Thirteen job records include their supplied details.
+Nanoshape, KCM, Sparseon and Formetis retain their previous preview information.
+KCM additionally uses the product, company and address values supplied by the
+event organizer in the screenshot. Readiness levels were not inferred from bars.
+The new board includes Stage, Business/Product/Technology Readiness Level,
+Go to Market Model, Product Type, Founders, Region, Industry and Headquarters.
+Fields not yet supplied by the API display "Noch nicht verfügbar".
+The full reader also includes descriptions, contact details, employees, founding
+year, category, handle, image links and profile dates.
+The intended Pitchload playlist is 87e366e3-2731-4099-9e38-9072e86795c1.
+Connecting live Pitchload data later requires a server-side integration that keeps
+the API key private. Adding a key to Netlify alone will not activate this static demo.
+FOMRIC has been corrected to FORMIC with the event organizer's confirmation.
+Company-specific decks, videos,
+booking links and official 3D assets can replace the sample media later.
+The present 3D objects are illustrative concepts, not official digital twins.
+All investment figures are invented demo amounts, not startup funding disclosures.
+Where no published role is available, the careers shelf shows a labeled sample role.
+
+CHECKS AND LIMITS
+This export is built for static hosting with WebXR enabled.
+Physical Meta Quest 3 testing has not been performed; use this upload for checking
+headset entry, controllers, readability, comfort and performance on your device.
+Opening index.html directly from your computer is not the headset test: use the
+deployed HTTPS URL. External company and published job links still need internet.
+
+Netlify upload reference:
+https://docs.netlify.com/start/quickstarts/netlify-drop-quickstart/

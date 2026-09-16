@@ -1,0 +1,14 @@
+@import '../../app/globals.css';
+@source '../../app';
+@source '../../components';
+
+@font-face {
+  font-family: 'Geist Demo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/geist-latin.woff2') format('woff2');
+}
+:root {
+  --font-geist-sans: 'Geist Demo';
+}

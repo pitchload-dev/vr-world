@@ -1,0 +1,4 @@
+/api/interests /.netlify/functions/interests 200!
+/meeting /index.html 200
+/meeting/ /index.html 200
+/* /index.html 200

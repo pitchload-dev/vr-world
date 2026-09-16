@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import ts from 'typescript';
+const out = resolve('work/pitchload-test'); mkdirSync(out,{recursive:true});
+for (const name of ['pitchload','startups','booth-content']) {
+ const code=ts.transpileModule(readFileSync(`lib/${name}.ts`,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
+ writeFileSync(`${out}/${name}.mjs`,code.replaceAll("'./startups'","'./startups.mjs'").replaceAll("'./booth-content'","'./booth-content.mjs'"));
+}
+const {loadPitchload,safeLink}=await import(pathToFileURL(`${out}/pitchload.mjs`));
+const {startups}=await import(pathToFileURL(`${out}/startups.mjs`));
+const cache=JSON.parse(readFileSync('work/pitchload-request-cache.json','utf8'));
+const paths=[];
+const mocked=async (url,options)=>{
+ assert.equal(new URL(url).origin,'https://pitchload.net');
+ assert.equal(options.headers.Authorization,'Bearer test-key');
+ assert.equal(options.redirect,'manual'); paths.push(url);
+ assert.ok(cache[url],url);
+ return Response.json(cache[url]);
+};
+const content=await loadPitchload('test-key',undefined,mocked);
+assert.equal(content.startups.filter(s=>s.contentSource==='pitchload').length,7);
+assert.equal(content.startups.reduce((n,s)=>n+s.jobs.length,0),13);
+assert.equal(content.startups[3].name,'FORMIC');
+assert.ok(paths.length<=20,'Per-load request budget');
+const firstDetail=paths.findIndex(p=>/\/jobs\//.test(p));
+assert.equal(paths.slice(firstDetail).some(p=>p.includes('/organizations/')),false,'Profiles before optional job details');
+for (const id of [6,8,9,10]) assert.deepEqual(content.startups[id-1],startups[id-1]);
+const snapshot=JSON.parse(readFileSync('work/pitchload-current.json','utf8'));
+for (const id of [6,8,9,10]) assert.deepEqual(snapshot.startups[id-1],JSON.parse(JSON.stringify(startups[id-1])));
+for (const s of snapshot.startups) for (const j of s.jobs) assert.ok(j.description?.length,'Detailed job text or supplied summary');
+const unavailable=await loadPitchload('test-key',undefined,async()=>new Response(null,{status:401}));
+assert.equal(unavailable.source,'preview'); assert.deepEqual(unavailable.startups,startups);
+const missing=await loadPitchload('test-key',undefined,async(url,options)=> url.includes('/organizations/rement?') ? new Response(null,{status:503}) : mocked(url,options));
+assert.deepEqual(missing.startups[0],startups[0]);
+assert.equal(missing.startups[1].contentSource,'pitchload');
+assert.equal(safeLink('javascript:alert(1)'),undefined);
+assert.equal(safeLink('https://secret@example.com'),undefined);
+console.log('PASS: 7 matched profiles, 13 job records, FORMIC alias, 4 unchanged fallbacks, profile priority, bounded requests, API failure fallback, and safe links.');

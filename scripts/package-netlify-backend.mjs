@@ -1,0 +1,17 @@
+import { build } from 'esbuild';
+import { cp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
+import { resolve } from 'node:path';
+const out=resolve('../outputs/kit-venture-hall-netlify-backend');
+await mkdir(out,{recursive:true});
+await rm(resolve(out,'public'),{recursive:true,force:true});
+await cp(resolve('../outputs/kit-venture-hall-netlify'),resolve(out,'public'),{recursive:true});
+await mkdir(resolve(out,'netlify/functions'),{recursive:true});
+const options={bundle:true,platform:'node',target:'node22',format:'esm',logLevel:'warning',banner:{js:'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);'}};
+await build({...options,entryPoints:['netlify/functions/interests.ts'],outfile:resolve(out,'netlify/functions/interests.mjs')});
+await build({...options,entryPoints:['server/local-interest-server.ts'],outfile:resolve(out,'local-server.mjs')});
+await writeFile(resolve(out,'netlify.toml'),'[build]\n  publish = "public"\n[functions]\n  directory = "netlify/functions"\n  node_bundler = "esbuild"\n[build.environment]\n  NODE_VERSION = "22"\n');
+await writeFile(resolve(out,'package.json'),JSON.stringify({name:'kit-venture-hall-backend',private:true,type:'module',engines:{node:'>=22.13.0'},scripts:{start:'node local-server.mjs',deploy:'npx --yes netlify-cli@27.6.0 deploy --prod --dir=public --functions=netlify/functions'}},null,2));
+await writeFile(resolve(out,'.gitignore'),'.netlify/\nnode_modules/\n.local-data/\n.env*\n');
+await cp('deployment/NETLIFY-BACKEND.md',resolve(out,'START-HERE.md'));
+await writeFile(resolve(out,'public/START-HERE.txt'),'This public folder is only the frontend. Deploy the full backend package using the instructions in START-HERE.md one directory above. Netlify Drop does not install its backend function.\n');
+console.log('Backend package created: '+out);
