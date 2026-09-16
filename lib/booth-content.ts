@@ -38,7 +38,7 @@ export function previewSlides(s: Startup) {
     },
   ];
 }
-export const previewVideo = '/media/venture-preview.mp4';
+export const previewVideo = 'media/venture-preview.mp4';
 export { followUpDays as meetingDays, followUpSlots as meetingSlots } from './follow-up';
 export function investmentPreview(id: number) {
   return (

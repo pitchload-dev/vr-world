@@ -7,10 +7,11 @@ import { startups } from '../../lib/startups';
 
 const project = process.cwd();
 const root = resolve(project, 'work/netlify');
+const githubPages = process.env.GITHUB_PAGES === 'true';
 
 export default defineConfig({
   root,
-  base: '/',
+  base: githubPages ? '/vr-world/' : '/',
   publicDir: resolve(project, 'public'),
   resolve: {
     alias: [
@@ -27,7 +28,10 @@ export default defineConfig({
       enforce: 'pre',
       transform(code, id) {
         if (id.split('?')[0] !== resolve(project, 'app/page.tsx')) return;
-        return code.replace("fetch('/api/exhibition'", "fetch('/demo-content.json'");
+        return code.replace(
+          "fetch('/api/exhibition'",
+          "fetch(import.meta.env.BASE_URL + 'demo-content.json'",
+        );
       },
       generateBundle() {
         const savedPath = resolve(project, 'work/pitchload-current.json');
@@ -51,7 +55,9 @@ export default defineConfig({
     react(),
   ],
   build: {
-    outDir: resolve(project, '../outputs/kit-venture-hall-netlify'),
+    outDir: githubPages
+      ? resolve(project, 'dist-pages')
+      : resolve(project, '../outputs/kit-venture-hall-netlify'),
     emptyOutDir: true,
     target: 'es2022',
     sourcemap: false,

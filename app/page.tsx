@@ -737,14 +737,14 @@ export default function Home() {
                       controls
                       playsInline
                       preload="none"
-                      poster="/media/venture-preview-poster.jpg"
+                      poster="media/venture-preview-poster.jpg"
                       src={previewVideo}
                     >
                       <track
                         kind="captions"
                         label="English"
                         srcLang="en"
-                        src="/media/preview.vtt"
+                        src="media/preview.vtt"
                         default
                       />
                     </video>
