@@ -23,17 +23,11 @@ Open http://localhost:4173. This runs the exhibition and its password-protected 
 
 Use the complete backend package for persistent tables. Netlify Drop uploads only the frontend and cannot install the function. See [deployment/NETLIFY-BACKEND.md](deployment/NETLIFY-BACKEND.md) for deployment instructions. Netlify stores requests in Netlify Blobs; the two tables share the configured server-side password login. Only the salted password verifier is included, never the plaintext password. An alternative verifier may be configured with `INTEREST_ADMIN_PASSWORD_HASH`.
 
-## Publish the static exhibition with GitHub Pages
-
-The workflow in `.github/workflows/pages.yml` publishes the static exhibition at `https://pitchload-dev.github.io/vr-world/` after every push to `main`.
-
-An administrator must enable it once in **Settings → Pages → Build and deployment → Source → GitHub Actions**. The repository is private, so the organization plan must support Pages for private repositories. Unless the organization uses Enterprise Cloud private Pages, the published website is public even though the source repository is private.
-
-GitHub Pages cannot run the server-side storage function. Profiles, booths, media, desktop controls and WebXR work there, but investment and follow-up submissions will show a storage error and the protected tables have no data source. Deploy the Netlify backend package when those features are needed online.
-
 ## Company data and media
 
 The standalone demo uses `work/pitchload-current.json`, the saved Pitchload playlist snapshot. Unmatched startups retain labeled preview content. Company decks, media, investment amounts and readiness values may include explicitly labeled samples or unavailable fields. The media directory includes a sample exhibit film and captions.
+
+The snapshot was refreshed on 18 September 2026 using the expanded API: all 13 documented startup details feed the product/company profile reader on desktop and in VR. Funding banners now reflect the supplied investment status and amount. Missing values remain unavailable; the four companies outside the playlist retain their existing content. Refresh from the API with `npm run refresh:pitchload`, using a local `PITCHLOAD_API_KEY` or ignored `.dev.vars`, then run `npm run build:demo`. The refresh never uses the old request cache or places the API key in the exported files.
 
 The separate Vinext development mode (`npm run dev`) provides `/api/exhibition` for live Pitchload data. Copy `.env.example` to `.dev.vars` and configure `PITCHLOAD_API_KEY` locally; see [API_INTEGRATION.md](API_INTEGRATION.md). The Netlify demo does not automatically become live when an API key is added. The local demo server and Netlify function provide the request-storage endpoints; the Vinext development server does not provide those endpoints.
 

@@ -16,7 +16,7 @@ Im Terminal diesen entpackten Ordner öffnen und folgende Schritte ausführen:
 
 Der vorgegebene Zugang ist als gesalzener Passwortprüfwert ausschließlich im Servercode hinterlegt. Weder das Klartextpasswort noch dieser Prüfwert stehen im öffentlichen Website-Ordner. Ein späteres anderes Passwort kann über einen neuen PBKDF2-Prüfwert in `INTEREST_ADMIN_PASSWORD_HASH` gesetzt werden. Format: `600000:32-stellige-Salt-Hex:64-stellige-Hash-Hex`, PBKDF2 mit SHA-256 und 600.000 Durchläufen. Danach die Funktion erneut bereitstellen.
 
-Der Pitchload-API-Schlüssel wird nicht benötigt: Die Firmenprofile sind weiterhin der gespeicherte Datenstand vom 9. September 2026.
+Der Pitchload-API-Schlüssel wird nicht benötigt: Die Firmenprofile sind der frisch abgerufene Datenstand vom 18. September 2026. Das Paket enthält alle dokumentierten Firmen- und Produktdetails, einschließlich Business / Product / Technology Readiness Level, Rechtsform, Gründungsmerkmalen und Investmentangaben. Leere API-Werte bleiben als nicht verfügbar gekennzeichnet. Nanoshape, KCM, Sparseon und Formetis sind weiterhin nicht in der Playlist und behalten die bisherigen Inhalte.
 
 ## Gespeicherte Tabellen
 
@@ -28,7 +28,7 @@ Im VR-Investmentformular lässt sich die Schrittweite zwischen 10 €, 100 €, 
 
 Das Veranstaltungsteam liest beide Tabellen ausschließlich nach serverseitiger Anmeldung. Die Sitzung läuft nach acht Stunden ab; Abmelden macht sie sofort ungültig. Anmeldeversuche und Übertragungen sind begrenzt. Technische Sitzungs- und Begrenzungseinträge enthalten keine Klartext-IP-Adressen. Der Browser erhält keine Daten, wenn die Anmeldung fehlt.
 
-Ohne Backend oder bei einem Fehler zeigt das Formular eine Fehlermeldung. Es behauptet dann nicht, dass gespeichert wurde. Die Beispiel-Investitionsbeträge bleiben Demo-Inhalte; es erfolgt keine Investition und keine Übermittlung an ONINO oder Pitchload.
+Ohne Backend oder bei einem Fehler zeigt das Formular eine Fehlermeldung. Es behauptet dann nicht, dass gespeichert wurde. Investment-Banner zeigen bei API-Profilen den gemeldeten Investmentstatus und Betrag; ohne API-Profil bleiben Beträge explizit als Demo gekennzeichnet. Die API nennt keine Währung zum Zielbetrag, deshalb wird dafür kein Währungssymbol ergänzt. Die freiwilligen Interessenbeträge im Veranstaltungsformular bleiben in Euro. Es erfolgt keine Investition und keine Übermittlung an ONINO oder Pitchload.
 
 ## Lokal ausprobieren
 

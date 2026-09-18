@@ -33,7 +33,7 @@ import {
 import {
   previewSlides,
   previewVideo,
-  investmentPreview,
+  investmentDisplay,
   boothJobs,
 } from '@/lib/booth-content';
 import { BoothPopup } from '@/components/booth-popup';
@@ -585,8 +585,8 @@ export default function Home() {
                       .length
                   }{' '}
                   profiles from Pitchload. Other booths retain their preview
-                  information. 3D exhibits and investment figures remain
-                  illustrative.
+                  information. 3D exhibits remain illustrative. Investment
+                  figures identify Pitchload data or demo content.
                   {contentDate &&
                     ` Content retrieved ${new Date(contentDate).toLocaleDateString('de-DE')}.`}
                 </p>
@@ -737,14 +737,14 @@ export default function Home() {
                       controls
                       playsInline
                       preload="none"
-                      poster="media/venture-preview-poster.jpg"
+                      poster="/media/venture-preview-poster.jpg"
                       src={previewVideo}
                     >
                       <track
                         kind="captions"
                         label="English"
                         srcLang="en"
-                        src="media/preview.vtt"
+                        src="/media/preview.vtt"
                         default
                       />
                     </video>
@@ -782,9 +782,9 @@ export default function Home() {
                   Visit {s.name} <MoveUpRight size={20} />
                 </button>
                 <div className="investment-banner">
-                  <span>SEEKING INVESTMENT · DEMO</span>
-                  <strong>{investmentPreview(s.id)}</strong>
-                  <small>Sample amount · not a company disclosure</small>
+                  <span>{investmentDisplay(s).label} · {investmentDisplay(s).source}</span>
+                  <strong>{investmentDisplay(s).amount}</strong>
+                  <small>{investmentDisplay(s).note}</small>
                   <button
                     className="interest-banner-button"
                     onClick={() => {
@@ -806,7 +806,7 @@ export default function Home() {
                   Request follow up <ArrowUpRight size={18} />
                 </button>
                 <p className="booking-note">
-                  Preview calendar · no real booking
+                  Your request is saved for the event team.
                 </p>
                 <p className="content-note">
                   {s.contentSource === 'pitchload'

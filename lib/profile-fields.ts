@@ -19,7 +19,7 @@ export function fullProfile(s: Startup): CompanyProfile {
 }
 export type ProfileField = { label: string; value: string; link?: string };
 const value = (v: unknown) =>
-  v === undefined || v === null || v === '' ? unavailable : String(v);
+  v === undefined || v === null || v === '' ? unavailable : typeof v === 'boolean' ? (v ? 'Yes' : 'No') : String(v);
 export function profileGroups(
   s: Startup,
 ): { title: string; fields: ProfileField[] }[] {
@@ -52,10 +52,22 @@ export function profileGroups(
         { label: 'Founders', value: value(p.founders) },
         { label: 'Region', value: value(p.region) },
         { label: 'Industry', value: value(p.industry) },
+        { label: 'Legal form', value: value(p.legalForm) },
+        { label: 'Incorporated', value: value(p.incorporated) },
+        { label: 'Female founders', value: value(p.femaleFounders) },
+        { label: 'First-time founders', value: value(p.firstTimeFounders) },
         { label: 'Employees', value: value(p.employees) },
         { label: 'Founding year', value: value(p.foundingYear) },
         { label: 'Category', value: value(p.category) },
         { label: 'Handle', value: value(p.handle) },
+      ],
+    },
+    {
+      title: 'Investment',
+      fields: [
+        { label: 'Seeking investment', value: value(p.seekingInvestment) },
+        { label: 'Investment size', value: p.investmentSize === undefined ? unavailable : p.investmentSize.toLocaleString('de-DE', { maximumFractionDigits: 2 }) },
+        { label: 'Currency', value: unavailable },
       ],
     },
     {
@@ -114,7 +126,7 @@ export function drawProfileFacts(c: CanvasRenderingContext2D, s: Startup) {
     c.fillStyle = '#272e29';
     panelText(c, label, 52, y, 502, 29, 1);
     c.fillStyle = v === unavailable ? '#778075' : '#252a26';
-    panelText(c, v, 580, y, 385, 29, 2, 1.15);
+    panelText(c, v, 580, y, 385, 25, 2, 1.1);
   };
   card('Our Product', 20, 465);
   groups[0].fields.forEach((f, i) => row(f.label, f.value, 148 + i * 58));

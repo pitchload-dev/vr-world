@@ -38,7 +38,7 @@ export function previewSlides(s: Startup) {
     },
   ];
 }
-export const previewVideo = 'media/venture-preview.mp4';
+export const previewVideo = '/media/venture-preview.mp4';
 export { followUpDays as meetingDays, followUpSlots as meetingSlots } from './follow-up';
 export function investmentPreview(id: number) {
   return (
@@ -56,6 +56,18 @@ export function investmentPreview(id: number) {
       '€3.5M',
     ][id - 1] || '€1M'
   );
+}
+export function investmentDisplay(s: Startup) {
+  const p = s.profile;
+  if (p?.provenance === 'pitchload') {
+    return {
+      label: p.seekingInvestment === false ? 'Not currently seeking investment' : p.seekingInvestment === true ? 'Seeking investment' : 'Investment information',
+      amount: p.seekingInvestment === false ? '—' : p.investmentSize === undefined ? 'Not disclosed' : p.investmentSize.toLocaleString('de-DE', { maximumFractionDigits: 2 }),
+      note: p.investmentSize === undefined || p.seekingInvestment === false ? 'Company information supplied by Pitchload.' : 'Pitchload funding target · currency not supplied.',
+      source: 'PITCHLOAD',
+    };
+  }
+  return { label: 'Seeking investment', amount: investmentPreview(s.id), note: 'Sample amount · not a company disclosure', source: 'DEMO' };
 }
 export function boothJobs(s: Startup) {
   return s.jobs.length

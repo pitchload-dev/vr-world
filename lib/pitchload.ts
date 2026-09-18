@@ -22,6 +22,21 @@ type Organization = {
   heroImageUrl?: string | null;
   created?: string | null;
   changed?: string | null;
+  startup?: {
+    stage?: string | null;
+    gtmModel?: string | null;
+    productType?: string | null;
+    industry?: string | null;
+    legalForm?: string | null;
+    incorporated?: boolean | null;
+    femaleFounders?: boolean | null;
+    firstTimeFounders?: boolean | null;
+    seekingInvestment?: boolean | null;
+    investmentSize?: number | null;
+    businessReadinessLevel?: string | null;
+    productReadinessLevel?: string | null;
+    technologyReadinessLevel?: string | null;
+  } | null;
 };
 type Job = {
   id?: string;
@@ -79,6 +94,8 @@ export function mapProfile(
   org: Organization,
   jobs: Job[] | null,
 ): Startup {
+  const details = org.startup || {};
+  const boolean = (v: unknown) => typeof v === 'boolean' ? v : undefined;
   return {
     ...base,
     name: base.name,
@@ -104,6 +121,19 @@ export function mapProfile(
       heroImageUrl: safeLink(org.heroImageUrl),
       created: text(org.created, 100),
       changed: text(org.changed, 100),
+      stage: text(details.stage, 300),
+      goToMarketModel: text(details.gtmModel, 300),
+      productType: text(details.productType, 300),
+      industry: text(details.industry, 500),
+      legalForm: text(details.legalForm, 300),
+      incorporated: boolean(details.incorporated),
+      femaleFounders: boolean(details.femaleFounders),
+      firstTimeFounders: boolean(details.firstTimeFounders),
+      seekingInvestment: boolean(details.seekingInvestment),
+      investmentSize: typeof details.investmentSize === 'number' && Number.isFinite(details.investmentSize) && details.investmentSize >= 0 ? details.investmentSize : undefined,
+      businessReadinessLevel: text(details.businessReadinessLevel, 1000),
+      productReadinessLevel: text(details.productReadinessLevel, 1000),
+      technologyReadinessLevel: text(details.technologyReadinessLevel, 1000),
       employees:
         Number.isInteger(org.employees) && org.employees! >= 0
           ? org.employees!

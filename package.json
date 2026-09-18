@@ -12,9 +12,10 @@
     "lint": "oxlint",
     "format": "oxfmt",
     "build:demo": "vite build --config work/netlify/vite.config.ts && node scripts/package-netlify-backend.mjs",
-    "build:pages": "GITHUB_PAGES=true vite build --config work/netlify/vite.config.ts",
+    "refresh:pitchload": "node scripts/refresh-pitchload.mjs",
     "demo": "node ../outputs/kit-venture-hall-netlify-backend/local-server.mjs",
     "typecheck": "tsc --noEmit",
+    "test:profiles": "esbuild work/test-company-details.ts --bundle --platform=node --target=node22 --format=esm --outfile=work/pitchload-test/details.mjs && node work/pitchload-test/details.mjs",
     "test": "node work/test-popups.mjs && node work/test-locomotion.mjs && esbuild work/test-interest-backend.ts --bundle --platform=node --target=node22 --format=esm --outfile=work/test-interest-backend.mjs && node work/test-interest-backend.mjs"
   },
   "dependencies": {

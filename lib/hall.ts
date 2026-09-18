@@ -6,7 +6,7 @@ import {
   placement,
   type Startup,
 } from './startups';
-import { previewSlides, investmentPreview, boothJobs } from './booth-content';
+import { previewSlides, investmentDisplay, boothJobs } from './booth-content';
 import { createImmersivePopup } from './immersive-popup';
 import { drawCompanyBoard, panelText } from './booth-panels';
 import { drawProfileFacts } from './profile-fields';
@@ -478,7 +478,8 @@ export function createHall(
     );
     fascia.userData.id = s.id;
     targets.push(fascia);
-    // A dedicated inward-facing investment panel keeps demo figures off the profile wall.
+    // Keep company funding targets and explicitly labeled preview amounts distinct.
+    const funding = investmentDisplay(s);
     const investmentZone = new THREE.Group();
     investmentZone.position.set(3.38, 0, -0.24);
     investmentZone.rotation.y = -Math.PI / 2;
@@ -495,14 +496,14 @@ export function createHall(
         c.fillStyle = '#173e36';
         c.fillRect(0, 0, 1024, 580);
         c.fillStyle = s.color;
-        panelText(c, 'INVESTMENT / DEMO', 48, 70, 920, 33, 1);
+        panelText(c, `INVESTMENT / ${funding.source}`, 48, 70, 920, 33, 1);
         c.fillStyle = '#ffffff';
-        panelText(c, investmentPreview(s.id), 48, 239, 920, 140, 1);
+        panelText(c, funding.amount, 48, 239, 920, 105, 1);
         c.fillStyle = '#c1d5c5';
-        panelText(c, 'Seeking investment', 48, 327, 920, 43, 1);
+        panelText(c, funding.label, 48, 327, 920, 38, 2);
         panelText(
           c,
-          'Sample amount. No funding target has been supplied through Pitchload.',
+          funding.note,
           48,
           421,
           920,

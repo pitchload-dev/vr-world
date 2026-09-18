@@ -24,6 +24,12 @@ export type CompanyProfile = {
   founders?: number;
   region?: string;
   industry?: string;
+  legalForm?: string;
+  incorporated?: boolean;
+  femaleFounders?: boolean;
+  firstTimeFounders?: boolean;
+  seekingInvestment?: boolean;
+  investmentSize?: number;
 };
 export type Startup = {
   profile?: CompanyProfile;

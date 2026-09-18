@@ -352,7 +352,7 @@ export function createImmersivePopup(
       c.roundRect(54, 185, 1092, 120, 22);
       c.fill();
       lines(
-        'Dieses Demo-Angebot ist noch nicht zur Zeichnung geöffnet. Ihre unverbindliche Angabe wird für das Veranstaltungsteam gespeichert. Es entsteht keine Verpflichtung.',
+        'Über diese Ausstellung ist keine Zeichnung möglich. Ihre unverbindliche Angabe wird für das Veranstaltungsteam gespeichert. Es entsteht keine Verpflichtung.',
         990,
         28,
       ).forEach((line, i) => ink(line, 88, 226 + i * 34, 28));

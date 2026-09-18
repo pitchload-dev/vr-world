@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import {
   interestLimits,
-  investmentPreview,
+  investmentDisplay,
   validInterestAmount,
 } from '@/lib/booth-content';
 import type { Startup } from '@/lib/startups';
@@ -65,8 +65,7 @@ export function InvestmentPopup({
     >
       <DialogContent className="interest-popup" lang="de">
         <span className="interest-company">
-          {startup.name} · Seeking investment {investmentPreview(startup.id)} ·
-          Demo
+          {startup.name} · {investmentDisplay(startup).label} · {investmentDisplay(startup).amount} · {investmentDisplay(startup).source}
         </span>
         <DialogTitle className="interest-title">
           Unverbindliche Interessenbekundung
@@ -74,7 +73,7 @@ export function InvestmentPopup({
         <DialogDescription className="interest-info">
           <Info size={30} aria-hidden="true" />
           <span>
-            Dieses Demo-Angebot ist noch nicht zur Zeichnung geöffnet. Sie
+            Über diese Ausstellung ist keine Zeichnung möglich. Sie
             können Ihr unverbindliches Interesse bekunden, um die Nachfrage
             einzuschätzen. Ihre Angabe wird für das Veranstaltungsteam
             gespeichert. Dies stellt keinerlei Verpflichtung dar.
