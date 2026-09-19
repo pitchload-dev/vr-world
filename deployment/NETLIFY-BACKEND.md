@@ -16,7 +16,9 @@ Im Terminal diesen entpackten Ordner öffnen und folgende Schritte ausführen:
 
 Der vorgegebene Zugang ist als gesalzener Passwortprüfwert ausschließlich im Servercode hinterlegt. Weder das Klartextpasswort noch dieser Prüfwert stehen im öffentlichen Website-Ordner. Ein späteres anderes Passwort kann über einen neuen PBKDF2-Prüfwert in `INTEREST_ADMIN_PASSWORD_HASH` gesetzt werden. Format: `600000:32-stellige-Salt-Hex:64-stellige-Hash-Hex`, PBKDF2 mit SHA-256 und 600.000 Durchläufen. Danach die Funktion erneut bereitstellen.
 
-Der Pitchload-API-Schlüssel wird nicht benötigt: Die Firmenprofile sind der frisch abgerufene Datenstand vom 18. September 2026. Das Paket enthält alle dokumentierten Firmen- und Produktdetails, einschließlich Business / Product / Technology Readiness Level, Rechtsform, Gründungsmerkmalen und Investmentangaben. Leere API-Werte bleiben als nicht verfügbar gekennzeichnet. Nanoshape, KCM, Sparseon und Formetis sind weiterhin nicht in der Playlist und behalten die bisherigen Inhalte.
+Der Pitchload-API-Schlüssel wird nicht benötigt: Die Firmenprofile sind der frisch abgerufene Datenstand vom 19. September 2026. Das Paket enthält alle dokumentierten Firmen- und Produktdetails, einschließlich Business / Product / Technology Readiness Level, Rechtsform, Gründungsmerkmalen und Investmentangaben. Leere API-Werte bleiben als nicht verfügbar gekennzeichnet. Nanoshape, KCM, Sparseon und Formetis sind weiterhin nicht in der Playlist und behalten die bisherigen Inhalte.
+
+Die zwölf verfügbaren Logos und Hero-Bilder sind lokal im Paket enthalten und an den jeweiligen Ständen sowie in den Firmenprofilen sichtbar. Fehlende Bildlinks behalten die bisherige Gestaltung.
 
 ## Gespeicherte Tabellen
 

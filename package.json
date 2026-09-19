@@ -13,6 +13,7 @@
     "format": "oxfmt",
     "build:demo": "vite build --config work/netlify/vite.config.ts && node scripts/package-netlify-backend.mjs",
     "refresh:pitchload": "node scripts/refresh-pitchload.mjs",
+    "sync:images": "node scripts/sync-company-images.mjs",
     "demo": "node ../outputs/kit-venture-hall-netlify-backend/local-server.mjs",
     "typecheck": "tsc --noEmit",
     "test:profiles": "esbuild work/test-company-details.ts --bundle --platform=node --target=node22 --format=esm --outfile=work/pitchload-test/details.mjs && node work/pitchload-test/details.mjs",

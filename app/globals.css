@@ -1317,6 +1317,22 @@ a {
   bottom: 20px;
   letter-spacing: 0;
 }
+.company-logo {
+  width: calc(100% - 40px);
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+.company-hero {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid #dce2d8;
+  border-radius: 8px;
+  margin: -12px 0 27px;
+}
 .company-headline[data-slot] {
   font-size: 20px;
   line-height: 1.5;

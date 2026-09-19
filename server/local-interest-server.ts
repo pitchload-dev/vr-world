@@ -21,6 +21,8 @@ const types: Record<string, string> = {
   '.svg': 'image/svg+xml',
   '.mp4': 'video/mp4',
   '.jpg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
   '.vtt': 'text/vtt',
   '.md': 'text/plain',
 };

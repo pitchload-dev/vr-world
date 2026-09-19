@@ -10,6 +10,7 @@ import { previewSlides, investmentDisplay, boothJobs } from './booth-content';
 import { createImmersivePopup } from './immersive-popup';
 import { drawCompanyBoard, panelText } from './booth-panels';
 import { drawProfileFacts } from './profile-fields';
+import { companyImage, containedImage } from './company-images';
 import type { BoothPopupType } from './booth-content';
 import { createExhibit } from './abstract-exhibits';
 import { exhibitConcept } from './exhibit-concepts';
@@ -53,6 +54,7 @@ export function createHall(
   cb: HallCallbacks,
   startups: Startup[] = previewStartups,
 ): HallAPI {
+  let disposed = false;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#c3d4d5');
   scene.fog = new THREE.Fog('#c3d4d5', 65, 160);
@@ -246,6 +248,38 @@ export function createHall(
       c.textBaseline = 'middle';
       c.fillText(text, 48, (512 * h) / w);
     });
+  const imagePanel = (
+    parent: THREE.Object3D, source: string, w: number, h: number,
+    x: number, y: number, z: number, logo: boolean, id: number,
+  ) => {
+    new THREE.ImageLoader().setCrossOrigin('anonymous').load(source, (image) => {
+      if (disposed) return;
+      const canvas = document.createElement('canvas');
+      // Bound texture memory for Quest; retain source aspect ratio with white margins.
+      canvas.width = logo ? 512 : 1024;
+      canvas.height = Math.round(canvas.width * h / w);
+      const context = canvas.getContext('2d')!;
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      const fit = containedImage(image.width, image.height, canvas.width, canvas.height, logo ? 18 : 0);
+      context.drawImage(image, fit.x, fit.y, fit.width, fit.height);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
+      const material = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
+      const panel = mesh(new THREE.PlaneGeometry(w, h), material, parent, x, y, z);
+      panel.castShadow = false;
+      panel.userData.activate = () => {
+        const startup = startups.find(s => s.id === id)!;
+        if (renderer.xr.isPresenting) popup.open(startup, 'profile');
+        else cb.content?.(id, 'about');
+      };
+      panel.userData.hint = 'Open company profile';
+      targets.push(panel);
+    }, undefined, () => {
+      // The permanent company name underneath remains available on load failure.
+    });
+  };
   const wrap = (
     c: CanvasRenderingContext2D,
     s: string,
@@ -436,6 +470,8 @@ export function createHall(
     return b;
   };
   startups.forEach((s, i) => {
+    const logo = companyImage(s, 'logo');
+    const hero = companyImage(s, 'hero');
     const p = placement(i),
       booth = new THREE.Group();
     booth.position.set(p.x, 0, p.z);
@@ -446,7 +482,17 @@ export function createHall(
     const wall = box(booth, 7.2, 3.85, 0.17, white, 0, 1.98, -2.7);
     wall.userData.id = s.id;
     targets.push(wall);
-    const sideWall = box(booth, 0.15, 3.85, 2.2, white, -3.55, 1.98, -1.7);
+    const sideWall = box(booth, 0.15, 3.85, hero ? 3.4 : 2.2, white, -3.55, 1.98, hero ? -1 : -1.7);
+    if (hero) {
+      // A separate inward-facing image wall preserves both full-size information boards.
+      const pictureWall = new THREE.Group();
+      pictureWall.position.set(-3.45, 2.14, -1);
+      pictureWall.rotation.y = Math.PI / 2;
+      booth.add(pictureWall);
+      box(pictureWall, 3.14, 1.88, 0.06, dark);
+      label(pictureWall, s.name, 3, 1.74, 0, 0, 0.036, '#ffffff', '#194b3b', 72);
+      imagePanel(pictureWall, hero, 3, 1.74, 0, 0, 0.04, false, s.id);
+    }
     // A gallery-like back wall: the profile is primary, film and meetings secondary.
     box(booth, 7.05, 0.72, 0.06, dark, 0, 3.38, -2.58);
     box(booth, 0.055, 2.35, 0.06, accent, 0.73, 1.75, -2.57);
@@ -469,7 +515,7 @@ export function createHall(
       `${String(s.id).padStart(2, '0')}  /  ${s.name}`,
       4.6,
       0.62,
-      0,
+      logo ? 0.45 : 0,
       4.13,
       2.72,
       '#f4f5ef',
@@ -478,6 +524,11 @@ export function createHall(
     );
     fascia.userData.id = s.id;
     targets.push(fascia);
+    if (logo) {
+      box(booth, 1.14, 0.66, 0.04, white, -2.72, 4.13, 2.7);
+      imagePanel(booth, logo, 1.1, 0.62, -2.72, 4.13, 2.73, true, s.id);
+      imagePanel(booth, logo, 0.88, 0.48, 2.03, 3.46, -2.525, true, s.id);
+    }
     // Keep company funding targets and explicitly labeled preview amounts distinct.
     const funding = investmentDisplay(s);
     const investmentZone = new THREE.Group();
@@ -1619,6 +1670,7 @@ export function createHall(
     },
     vr: startVR,
     dispose() {
+      disposed = true;
       popup.dispose();
       cues.dispose();
       focus.removeFromParent();

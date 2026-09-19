@@ -38,6 +38,7 @@ import {
 } from '@/lib/booth-content';
 import { BoothPopup } from '@/components/booth-popup';
 import { ProfileFacts } from '@/components/profile-facts';
+import { CompanyBrand } from '@/components/company-brand';
 import { InterestAdmin } from '@/components/interest-admin';
 import { exhibitConcept } from '@/lib/exhibit-concepts';
 import { companyFacts, profileParagraphs } from '@/lib/booth-panels';
@@ -599,10 +600,7 @@ export default function Home() {
                 >
                   <ArrowLeft size={16} /> All startups
                 </button>
-                <div className="company-mark" style={{ background: s.color }}>
-                  {s.name[0]}
-                  <span>{String(s.id).padStart(2, '0')}</span>
-                </div>
+                <CompanyBrand key={s.id} startup={s} />
                 <span className="eyebrow">
                   BOOTH {String(s.id).padStart(2, '0')} /{' '}
                   {s.sector.toUpperCase()}

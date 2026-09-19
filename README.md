@@ -25,9 +25,13 @@ Use the complete backend package for persistent tables. Netlify Drop uploads onl
 
 ## Company data and media
 
+Company logos appear on each supplied booth's entrance and back-wall header. Hero images have a separate inward-facing side wall, preserving the information boards. The same artwork appears in the desktop company profile. Images use their complete aspect ratio, including any embedded text. Missing or failed images retain the company-name fallback.
+
+Run `npm run sync:images` after refreshing Pitchload to download its public logo and hero URLs into `public/media/companies/` and update `lib/company-image-assets.json`. The full Netlify package includes these files, so the headset does not depend on external image-server CORS. Original API URLs remain in the profile data. Six companies currently supply both images; Superheated and the four unmatched previews have no images in the current API snapshot.
+
 The standalone demo uses `work/pitchload-current.json`, the saved Pitchload playlist snapshot. Unmatched startups retain labeled preview content. Company decks, media, investment amounts and readiness values may include explicitly labeled samples or unavailable fields. The media directory includes a sample exhibit film and captions.
 
-The snapshot was refreshed on 18 September 2026 using the expanded API: all 13 documented startup details feed the product/company profile reader on desktop and in VR. Funding banners now reflect the supplied investment status and amount. Missing values remain unavailable; the four companies outside the playlist retain their existing content. Refresh from the API with `npm run refresh:pitchload`, using a local `PITCHLOAD_API_KEY` or ignored `.dev.vars`, then run `npm run build:demo`. The refresh never uses the old request cache or places the API key in the exported files.
+The snapshot was refreshed on 19 September 2026 using the expanded API: all 13 documented startup details feed the product/company profile reader on desktop and in VR. Funding banners now reflect the supplied investment status and amount. Missing values remain unavailable; the four companies outside the playlist retain their existing content. Refresh from the API with `npm run refresh:pitchload`, using a local `PITCHLOAD_API_KEY` or ignored `.dev.vars`, then run `npm run build:demo`. The refresh never uses the old request cache or places the API key in the exported files.
 
 The separate Vinext development mode (`npm run dev`) provides `/api/exhibition` for live Pitchload data. Copy `.env.example` to `.dev.vars` and configure `PITCHLOAD_API_KEY` locally; see [API_INTEGRATION.md](API_INTEGRATION.md). The Netlify demo does not automatically become live when an API key is added. The local demo server and Netlify function provide the request-storage endpoints; the Vinext development server does not provide those endpoints.
 
